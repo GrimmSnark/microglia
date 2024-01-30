@@ -21,7 +21,7 @@ timelapseTif = read_Tiffs(timelapsePath);
 
 %% run first classification
 tic
-reclassImage = trackMicrogliaMasks(masksTif);
+reclassImage = trackMicrogliaMasks(masksTif,1);
 toc
 
 

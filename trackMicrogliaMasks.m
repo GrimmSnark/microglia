@@ -30,7 +30,25 @@ else
     end
 end
 
+%% make it binary
+
+for fr = 1:size(masks,3)
+    binaryImage = imcomplement(logical(masks(:,:,fr))); % Threshold.
+    masks(:,:,fr) = binaryImage;
+end
+
 %% get improps
+
+if erodeFlag == 1
+    % erode image by 1 pixel
+    se = strel('disk', 1);
+
+    for fr = 1:size(masks,3)
+        mask = imerode(binaryImage, se);
+        masks(:,:,fr) = mask;
+    end
+end
+
 
 % for each image
 for i = 1: size(masks,3)-1
@@ -39,63 +57,51 @@ for i = 1: size(masks,3)-1
     % if we are looking at first image, use the raw masks
     if i == 1
         currImage = masks(:,:,i);
-        curImProps = struct2cell(regionprops(currImage, "PixelIdxList"));
+        currImage = logical(currImage);
+
+
+        if canUseGPU == 1
+            tempImProps =  bwconncomp(gather(currImage), 4);
+        else
+            tempImProps =  bwconncomp(currImage, 4);
+        end
+
+        % rebuild the now split image
+        currImage = labelmatrix(tempImProps);
 
         % clean image props to remove blanks and very small objects
-        currImLens = cellfun(@length, curImProps);
+        currImLens = cellfun(@length, tempImProps.PixelIdxList);
         currImFilterNums = find(currImLens < 100);
 
         currImage = changem(currImage, [zeros(length(currImFilterNums),1)], [currImFilterNums]); % replace all small objects with zero
         currImage =  changem(currImage, [0:length(unique(currImage))-1], [unique(currImage)]); % renumber the array
 
-        if erodeFlag == 1
-            % erode image by 1 pixel
-            se = strel('disk', 1, 0);
-            binaryImage = currImage > 0; % Threshold.
-            mask = imerode(binaryImage, se);
-            currImage(~mask) = 0;
-        end
-
         reIndexStack = currImage;
     else % otherwise use the last image in the cleaned aligned stack
 
         currImage = reIndexStack(:,:,i);
-
     end
 
-    if erodeFlag == 1
-        % erode image by 1 pixel
-        nextImage = masks(:,:,i+1);
-        binaryImage = nextImage > 0; % Threshold.
-        mask = imerode(binaryImage, se);
-        nextImage(~mask) = 0;
+
+    nextImage = masks(:,:,i+1);
+    nextImage = logical(nextImage);
+
+    if canUseGPU == 1
+        nextImProps =  bwconncomp(gather(nextImage), 4);
     else
-        nextImage = masks(:,:,i+1);
+        nextImProps =  bwconncomp(nextImage, 4);
     end
 
-
-    nextImProps =  struct2cell(regionprops(nextImage, "PixelIdxList"));
+     % rebuild the now split image
+    nextImage = labelmatrix(nextImProps);
 
     % clean image props to remove blanks and very small objects
-    nextImLens = cellfun(@length, nextImProps);
+    nextImLens = cellfun(@length, nextImProps.PixelIdxList);
     nextImFilterNums = find(nextImLens < 100);
 
     nextImage = changem(nextImage, [zeros(length(nextImFilterNums),1)], [nextImFilterNums]); % replace all small objects with zero
     nextImage =  changem(nextImage, [0:length(unique(nextImage))-1], [unique(nextImage)]); % renumber the array
 
-    % split and recount discontinous label image
-    if canUseGPU == true
-        nextImage = gather(nextImage);
-
-        nextImageCC = bwconncomp(nextImage);
-        nextImage = labelmatrix(nextImageCC);
-
-        nextImage = gpuArray(nextImage);
-
-    else
-        nextImageCC = bwconncomp(nextImage);
-        nextImage = labelmatrix(nextImageCC);
-    end
    
 
     %     % get filtered image objects

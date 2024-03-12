@@ -1,4 +1,4 @@
-function microgliaMaskCuration(labelMasksPath)
+function microgliaMaskCurationSingleIm(labelMasksPath)
 
 %% defaults
 if nargin < 1 || isempty(labelMasksPath)
@@ -21,17 +21,9 @@ timelapseTif = read_Tiffs(timelapsePath);
 
 %% run first classification
 tic
-reclassImage = trackMicrogliaMasks(masksTif);
+reclassImage = trackMicrogliaMasksSingleIm(masksTif);
 toc
 
-
-%% create LUT image
-% IDs = unique(reclassImage(:));
-% IDs = [IDs' IDs(end)+1: IDs(end)+100];
-% testIm = uint16(zeros(size(reclassImage,[1 2])));
-% 
-% LUT = distinguishable_colors(max(IDs),'k');
-% reclassImage = cat(3,testIm,reclassImage);
 %% load into FIJI
 reclassImageImp = MIJ.createImage('Label Masks',reclassImage,1);
 % reclassImageImp.setLut( LUT)
@@ -56,7 +48,7 @@ while ~happy
     switch answer
         case 'Recalculate Masks'
             modifiedStack = MIJ.getImage('Label Masks');
-            reclassImage = trackMicrogliaMasks(modifiedStack);
+            reclassImage = a(modifiedStack);
 
             reclassImageImp.changes = false;
             reclassImageImp.close;
@@ -91,11 +83,5 @@ reclassImageImp.close;
 
 timelapseImageImp.changes = false;
 timelapseImageImp.close;
-
-% %% run metrics morphology scripts
-% ij.IJ.run('Measure Microglia Morphometry', ['intensityfile= "' '\\campus\rdw\ion10\10\retina\data\microglia\Cori microglia analysis\Copy folder\Substack (1-5)_intensity.tif' '" labelmaskfile= "' labelMasksPath '" outputdirectory= "' fileFolder '"']);
-% 
-% ij.IJ.run('Measure Microglia Morphometry', ['intensityfile= "' '\\campus\rdw\ion10\10\retina\data\microglia\Cori microglia analysis\Copy folder\Substack (1-5)_intensity.tif' '" labelmaskfile= "' '\\campus\rdw\ion10\10\retina\data\microglia\Cori microglia analysis\Copy folder\Substack (1-5).tif' '" outputdirectory= "' fileFolder '"']);
-
 
 end

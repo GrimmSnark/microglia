@@ -73,8 +73,15 @@ for i = 1: size(masks,3)-1
         currImLens = cellfun(@length, tempImProps.PixelIdxList);
         currImFilterNums = find(currImLens < 100);
 
-        currImage = changem(currImage, [zeros(length(currImFilterNums),1)], [currImFilterNums]); % replace all small objects with zero
-        currImage =  changem(currImage, [0:length(unique(currImage))-1], [unique(currImage)]); % renumber the array
+        % replace all small numbers with zeros
+        [replaceIndx, replaceLocs] = ismember(currImage, currImFilterNums);
+        replaceNumbers =  [zeros(length(currImFilterNums),1)];
+        currImage(replaceIndx) = replaceNumbers(replaceLocs(replaceIndx));
+
+        % reindex the objects
+        [replaceIndx, replaceLocs] = ismember(currImage, unique(currImage));
+        replaceNumbers =  [0:length(unique(currImage))-1];
+        currImage(replaceIndx) = replaceNumbers(replaceLocs(replaceIndx));
 
         reIndexStack = currImage;
     else % otherwise use the last image in the cleaned aligned stack
@@ -99,10 +106,16 @@ for i = 1: size(masks,3)-1
     nextImLens = cellfun(@length, nextImProps.PixelIdxList);
     nextImFilterNums = find(nextImLens < 100);
 
-    nextImage = changem(nextImage, [zeros(length(nextImFilterNums),1)], [nextImFilterNums]); % replace all small objects with zero
-    nextImage =  changem(nextImage, [0:length(unique(nextImage))-1], [unique(nextImage)]); % renumber the array
 
-   
+    % replace all small numbers with zeros
+    [replaceIndx, replaceLocs] = ismember(nextImage, nextImFilterNums);
+    replaceNumbers =  [zeros(length(nextImFilterNums),1)];
+    nextImage(replaceIndx) = replaceNumbers(replaceLocs(replaceIndx));
+
+    % reindex the objects
+    [replaceIndx, replaceLocs] = ismember(nextImage, unique(nextImage));
+    replaceNumbers =  [0:length(unique(nextImage))-1];
+    nextImage(replaceIndx) = replaceNumbers(replaceLocs(replaceIndx));
 
     %     % get filtered image objects
     %     curImPropsFiltered = struct2cell(regionprops(currImage, "PixelIdxList"));

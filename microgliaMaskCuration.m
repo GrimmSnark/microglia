@@ -1,4 +1,4 @@
-function microgliaMaskCuration(labelMasksPath)
+function microgliaMaskCuration(labelMasksPath, invertIm)
 
 %% defaults
 if nargin < 1 || isempty(labelMasksPath)
@@ -6,6 +6,10 @@ if nargin < 1 || isempty(labelMasksPath)
         'Label Masks File Selector');
 
     labelMasksPath = fullfile(path,file);
+end
+
+if nargin < 2  || isempty(invertIm)
+    invertIm = 0;
 end
 
 intializeMIJ;
@@ -21,9 +25,8 @@ timelapseTif = read_Tiffs(timelapsePath);
 
 %% run first classification
 tic
-reclassImage = trackMicrogliaMasks(masksTif);
+reclassImage = trackMicrogliaMasks(masksTif,[],invertIm);
 toc
-
 
 %% create LUT image
 % IDs = unique(reclassImage(:));

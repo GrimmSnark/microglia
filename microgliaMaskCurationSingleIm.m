@@ -1,4 +1,4 @@
-function microgliaMaskCurationSingleIm(labelMasksPath)
+function microgliaMaskCurationSingleIm(labelMasksPath, invertIm)
 
 %% defaults
 if nargin < 1 || isempty(labelMasksPath)
@@ -6,6 +6,10 @@ if nargin < 1 || isempty(labelMasksPath)
         'Label Masks File Selector');
 
     labelMasksPath = fullfile(path,file);
+end
+
+if nargin < 2  || isempty(invertIm)
+    invertIm = 0;
 end
 
 intializeMIJ;
@@ -21,7 +25,7 @@ timelapseTif = read_Tiffs(timelapsePath);
 
 %% run first classification
 tic
-reclassImage = trackMicrogliaMasksSingleIm(masksTif);
+reclassImage = trackMicrogliaMasksSingleIm(masksTif,[],invertIm);
 toc
 
 %% load into FIJI

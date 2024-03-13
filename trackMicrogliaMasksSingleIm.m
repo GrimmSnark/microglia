@@ -1,8 +1,12 @@
-function reclassedIm = trackMicrogliaMasksSingleIm(maskPath, erodeFlag)
+function reclassedIm = trackMicrogliaMasksSingleIm(maskPath, erodeFlag, invertIm)
 
 % defaults
 if nargin < 2
     erodeFlag = 0;
+end
+
+if nargin < 3  || isempty(invertIm)
+    invertIm = 0;
 end
 
 hardCentroidDistLimPix = 75; % search radius in pixels
@@ -31,8 +35,11 @@ else
 end
 
 %% make it binary
-
-masks = imcomplement(logical(masks)); % Threshold.
+if invertIm == 1
+    masks = imcomplement(logical(masks)); % Threshold.
+else
+    masks = logical(masks); % Threshold.
+end
 
 %% get improps
 

@@ -1,9 +1,14 @@
-function reclassImage = trackMicrogliaMasks(maskPath, erodeFlag)
+function reclassImage = trackMicrogliaMasks(maskPath, erodeFlag, invertIm)
 
 % defaults
 if nargin < 2
     erodeFlag = 0;
 end
+
+if nargin < 3  || isempty(invertIm)
+    invertIm = 0;
+end
+
 
 hardCentroidDistLimPix = 75; % search radius in pixels
 
@@ -33,7 +38,11 @@ end
 %% make it binary
 
 for fr = 1:size(masks,3)
-    binaryImage = imcomplement(logical(masks(:,:,fr))); % Threshold.
+    if invertIm == 1
+        binaryImage = imcomplement(logical(masks(:,:,fr))); % Threshold.
+    else
+        binaryImage = logical(masks(:,:,fr)); % Threshold.
+    end
     masks(:,:,fr) = binaryImage;
 end
 

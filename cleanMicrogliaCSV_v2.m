@@ -85,7 +85,12 @@ for i = 1:length(objLab)
 
     tempTab.Area_Micron2 = tempTab.Area_Pixel2 * tempTab.VoxelSpacing_X(1);
     tempTab.ConvexArea_Micron2 = tempTab.ConvexArea_Pixel2 * tempTab.VoxelSpacing_X(1);
-    tempTab.GeodesicDiameter_Micron = tempTab.GeodesicDiameter_Pixel * tempTab.VoxelSpacing_X(1);
+
+    try
+        tempTab.GeodesicDiameter_Micron = tempTab.GeodesicDiameter_Pixel * tempTab.VoxelSpacing_X(1);
+    catch
+
+    end
     tempTab.Perimeter_Micron = tempTab.Perimeter_Pixel * tempTab.VoxelSpacing_X(1);
     tempTab.SkeletonAvgBranchLength_Micron = tempTab.SkeletonAvgBranchLength_Pixel * tempTab.VoxelSpacing_X(1);
     tempTab.SkeletonLongestBranchLength_Micron = tempTab.SkeletonLongestBranchLength_Pixel * tempTab.VoxelSpacing_X(1);
@@ -114,7 +119,10 @@ for i = 1:length(objLab)
 
     tempTab.somaness = (tempTab.RadiusAtBrightestPoint_Pixel .^2) ./tempTab.Area_Pixel2;
 
-    tempTab.branchiness = tempTab.SkeletonNumBranchPoints ./ tempTab.GeodesicDiameter_Pixel;
+    try
+        tempTab.branchiness = tempTab.SkeletonNumBranchPoints ./ tempTab.GeodesicDiameter_Pixel;
+    catch
+    end
 
     microgliaTab(microgliaTab.Object_Label == objLab(i),:) = tempTab;
 end

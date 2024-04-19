@@ -30,11 +30,10 @@ toc
 
 %% load into FIJI
 reclassImageImp = MIJ.createImage('Label Masks',reclassImage,1);
-% reclassImageImp.setLut( LUT)
-ij.IJ.run("Glasbey on Dark");
-ij.IJ.run("Macro...", "code=v=v%255");
+ij.IJ.setThreshold( 1,  65535);
+MIJ.run("Convert to Mask");
+MIJ.run("Analyze Particles...", "  show=[Overlay Masks] clear overlay");
 
-% ij.IJ.run(reclassImageImp, "Glasbey modulus for 16bit count masks", "");
 
 timelapseImageImp = MIJ.createImage('Timelapse',timelapseTif,1);
 ij.IJ.run("Synchronize Windows", "");
@@ -51,19 +50,10 @@ while ~happy
     % Handle response
     switch answer
         case 'Recalculate Masks'
-            modifiedStack = MIJ.getImage('Label Masks');
-            reclassImage = a(modifiedStack);
-
-            reclassImageImp.changes = false;
-            reclassImageImp.close;
-            reclassImageImp = MIJ.createImage('Label Masks',reclassImage,1);
-
-            ij.IJ.run("Glasbey on Dark");
-            ij.IJ.run("Macro...", "code=v=v%255");
-
-%             ij.IJ.run(reclassImageImp, "Glasbey modulus for 16bit count masks", "");
+            reclassImageImp.show
+            MIJ.run("Analyze Particles...", "  show=[Overlay Masks] clear overlay");
             
-        case 'Save Masks and Close'
+        case 'Save Masks'
             happy = true;
 
         case 'Save and Continue Curation'
@@ -79,13 +69,22 @@ end
 
 
 %% save the masks
-saveIm = MIJ.getImage('Label Masks');
-saveastiff(saveIm, labelMasksPath);
+reclassImageImp.show
+ij.IJ.setThreshold( 1,  255);
+MIJ.run("Convert to Mask");
+MIJ.run("Analyze Particles...", "  show=[Count Masks] clear overlay");
+newLabeledImp = ij.IJ.getImage();
+
+ij.IJ.saveAsTiff(newLabeledImp,labelMasksPath);
 
 reclassImageImp.changes = false;
 reclassImageImp.close;
 
 timelapseImageImp.changes = false;
 timelapseImageImp.close;
+
+newLabeledImp.changes = false;
+newLabeledImp.close;
+
 
 end

@@ -31,7 +31,7 @@ HM_Table(HM_Table.Area_Pixel2 <= areaLim,:) = [];
 [D,I] = pdist2([HM_Table.Centroid_X_Pixel HM_Table.Centroid_Y_Pixel],[GFP_Table.Centroid_X_Pixel GFP_Table.Centroid_Y_Pixel],'euclidean','Smallest',1);
 D = D';
 
-overlapFlag = zeros(height(HM_Table),1);
+overlapFlag = zeros(height(GFP_Table),1);
 overlapFlag(D<distanceLim) = 1;
 
 %% plotting (USE FOR DEBUG)
@@ -52,8 +52,8 @@ overlapFlag(D<distanceLim) = 1;
 
 %% saving filtered data
 
-HM_Table(overlapFlag ==1,:)=[];
+GFP_Table(overlapFlag ==1,:)=[];
 
-writetable(HM_Table)
+writetable(GFP_Table, [GFP_Filepath(1:end-4) '_filtered.csv']);
 
 end

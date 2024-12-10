@@ -2,6 +2,19 @@ function countYoPro_HMOX1(HMOX1ImPath, yoproImPath)
 
 %% defaults
 sizeLim = 50;
+
+% ui file picker
+if isempty(HMOX1ImPath)
+    [file,path] = uigetfile('*.tiff', ...
+        'Select HMOX1 File');
+    HMOX1ImPath = fullfile(path, file);
+
+     [file,path] = uigetfile('*.tiff', ...
+        'Select YoPro File', path);
+    yoproImPath = fullfile(path, file);
+end
+
+
 props = ["Area", "Centroid", "PixelIdxList"];
 [savePath, name] = fileparts(HMOX1ImPath);
 

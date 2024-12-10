@@ -48,7 +48,7 @@ for i = 1:length(HMOX_RP)
         tempHO = HMOX_RP(i).PixelIdxList;
         tempYoPro = yoproRP(j).PixelIdxList;
 
-        tempOverlaps = length(tempHO)/sum(ismember(tempYoPro,tempHO));
+        tempOverlaps =sum(ismember(tempYoPro,tempHO))/ length(tempHO);
 
         if ~isinf(tempOverlaps)
             overlaps(i, count) = tempOverlaps;

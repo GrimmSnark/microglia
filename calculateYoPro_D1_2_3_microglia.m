@@ -114,17 +114,17 @@ for x = 1:length(maskFilepath)
 
         % use this to check calculations
 
-        g = imshow(imbinarize(masks));
-        hold on
-        plot(retinaBoundShape)
-        plot(bloodVesselBoundShape)
-        scatter(opticNerveCentroid(1), opticNerveCentroid(2));
-        scatter(maskCentroid(w,1), maskCentroid(w,2));
-        scatter(BVEdgePos(w,1),BVEdgePos(w,2));
-        scatter(retinaEdgePos(w,1),retinaEdgePos(w,2),'g')
-
-        plot(line2UseD2(:,1),line2UseD2(:,2),'b');
-        plot(line2UseD3(:,1),line2UseD3(:,2),'g');
+        % g = imshow(imbinarize(masks));
+        % hold on
+        % plot(retinaBoundShape)
+        % plot(bloodVesselBoundShape)
+        % scatter(opticNerveCentroid(1), opticNerveCentroid(2));
+        % scatter(maskCentroid(w,1), maskCentroid(w,2));
+        % scatter(BVEdgePos(w,1),BVEdgePos(w,2));
+        % scatter(retinaEdgePos(w,1),retinaEdgePos(w,2),'g')
+        % 
+        % plot(line2UseD2(:,1),line2UseD2(:,2),'b');
+        % plot(line2UseD3(:,1),line2UseD3(:,2),'g');
 
         count = count +1;
 
